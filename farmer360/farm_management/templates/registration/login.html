@@ -1,0 +1,42 @@
+{% extends 'farm_management/base.html' %}
+
+{% block title %}Login - Farmer360{% endblock %}
+
+{% block content %}
+<div style="max-width: 400px; margin: 3rem auto;">
+    <div class="card">
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <div style="font-size: 3rem; color: var(--jungle-green); margin-bottom: 1rem;">🌱</div>
+            <h1 style="color: var(--jungle-green); margin-bottom: 0.5rem;">Welcome Back</h1>
+            <p style="color: var(--gray);">Sign in to your Farmer360 account</p>
+        </div>
+        
+        {% if form.errors %}
+            <div style="background: #f8d7da; color: #721c24; padding: 1rem; border-radius: 5px; margin-bottom: 1rem;">
+                <strong>Login failed:</strong> Please check your username and password.
+            </div>
+        {% endif %}
+        
+        <form method="post">
+            {% csrf_token %}
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Username</label>
+                <input type="text" name="username" required style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 5px; font-size: 1rem;">
+            </div>
+            
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Password</label>
+                <input type="password" name="password" required style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 5px; font-size: 1rem;">
+            </div>
+            
+            <button type="submit" class="btn" style="width: 100%; font-size: 1rem; padding: 1rem;">
+                Sign In
+            </button>
+        </form>
+        
+        <div style="text-align: center; margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #e0e0e0;">
+            <p style="color: var(--gray);">Don't have an account? <a href="{% url 'signup' %}" style="color: var(--jungle-green);">Sign up</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

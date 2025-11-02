@@ -1,11 +1,57 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Farm Field Map</title>
-</head>
-<body>
-    <h1>Farm Field Editor</h1>
-    <div id="map" style="height: 400px;"></div>
-    <a href="{% url 'dashboard' %}">Back to Dashboard</a>
-</body>
-</html>
+{% extends 'farm_management/base.html' %}
+
+{% block title %}Field Editor - Farmer360{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1 style="color: var(--jungle-green); margin-bottom: 2rem;"><span class="icon-map"></span> Field Editor</h1>
+    
+    <div style="background: #f8f9fa; padding: 2rem; border-radius: 8px; text-align: center; margin-bottom: 2rem;">
+        <h3 style="color: var(--jungle-green); margin-bottom: 1rem;">Interactive Map Coming Soon</h3>
+        <p style="margin-bottom: 1.5rem;">Draw your field boundaries and set coordinates</p>
+        <div style="height: 400px; background: #e9ecef; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem;">
+            <div style="text-align: center; color: var(--gray);">
+                <div style="font-size: 3rem; margin-bottom: 1rem;"><span class="icon-map"></span></div>
+                <p>Leaflet.js map integration will be implemented here</p>
+                <p><small>Features: Draw polygons, set coordinates, satellite imagery</small></p>
+            </div>
+        </div>
+    </div>
+    
+    <div style="background: white; padding: 2rem; border-radius: 8px; border: 1px solid #e0e0e0;">
+        <h3 style="color: var(--jungle-green); margin-bottom: 1.5rem;">Add Field Manually</h3>
+        <form style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Field Name</label>
+                <input type="text" placeholder="e.g., North Field" style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 5px;">
+            </div>
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Crop Type</label>
+                <select style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 5px;">
+                    <option>Select crop type</option>
+                    <option>Maize</option>
+                    <option>Rice</option>
+                    <option>Wheat</option>
+                    <option>Beans</option>
+                </select>
+            </div>
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Latitude</label>
+                <input type="number" step="0.000001" placeholder="-1.286389" style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 5px;">
+            </div>
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Longitude</label>
+                <input type="number" step="0.000001" placeholder="36.817223" style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 5px;">
+            </div>
+            <div style="grid-column: 1 / -1;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Notes</label>
+                <textarea placeholder="Additional information about this field..." style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 5px; height: 100px; resize: vertical;"></textarea>
+            </div>
+            <div style="grid-column: 1 / -1; display: flex; gap: 1rem; justify-content: flex-end;">
+                <a href="{% url 'dashboard' %}" class="btn btn-secondary">Cancel</a>
+                <button type="submit" class="btn">Save Field</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

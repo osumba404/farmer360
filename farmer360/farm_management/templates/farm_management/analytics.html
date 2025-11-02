@@ -1,0 +1,100 @@
+{% extends 'farm_management/base.html' %}
+
+{% block title %}Analytics - Farmer360{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1 style="color: var(--jungle-green); margin-bottom: 2rem;"><span class="icon-chart"></span> Farm Analytics</h1>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+        <div style="text-align: center; padding: 1.5rem; background: linear-gradient(135deg, var(--jungle-green), var(--light-green)); color: white; border-radius: 10px;">
+            <h2 style="font-size: 2.5rem; margin-bottom: 0.5rem;">{{ total_fields }}</h2>
+            <p><strong>Total Fields</strong></p>
+        </div>
+        <div style="text-align: center; padding: 1.5rem; background: linear-gradient(135deg, #28a745, #20c997); color: white; border-radius: 10px;">
+            <h2 style="font-size: 2.5rem; margin-bottom: 0.5rem;">{{ healthy_fields }}</h2>
+            <p><strong>Healthy Fields</strong></p>
+        </div>
+        <div style="text-align: center; padding: 1.5rem; background: linear-gradient(135deg, #ffc107, #fd7e14); color: white; border-radius: 10px;">
+            <h2 style="font-size: 2.5rem; margin-bottom: 0.5rem;">{{ fields_need_attention }}</h2>
+            <p><strong>Need Attention</strong></p>
+        </div>
+        <div style="text-align: center; padding: 1.5rem; background: linear-gradient(135deg, #17a2b8, #6f42c1); color: white; border-radius: 10px;">
+            <h2 style="font-size: 2.5rem; margin-bottom: 0.5rem;">{{ avg_ndvi|floatformat:2 }}</h2>
+            <p><strong>Avg NDVI</strong></p>
+        </div>
+    </div>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+    <div class="card">
+        <h2 style="color: var(--jungle-green); margin-bottom: 1.5rem;"><span class="icon-leaf"></span> Field Health Overview</h2>
+        {% for data in field_data %}
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; margin: 0.5rem 0; background: #f8f9fa; border-radius: 5px;">
+                <div>
+                    <strong>{{ data.field.name }}</strong>
+                    <br><small>{{ data.field.latitude|floatformat:4 }}, {{ data.field.longitude|floatformat:4 }}</small>
+                </div>
+                <div style="text-align: right;">
+                    <span class="health-{{ data.health_status }}">●</span>
+                    {% if data.latest_snapshot %}
+                        <br><small>NDVI: {{ data.latest_snapshot.ndvi_value|floatformat:2 }}</small>
+                    {% endif %}
+                </div>
+            </div>
+        {% empty %}
+            <p style="text-align: center; color: var(--gray); padding: 2rem;">No fields to analyze</p>
+        {% endfor %}
+    </div>
+    
+    <div class="card">
+        <h2 style="color: var(--jungle-green); margin-bottom: 1.5rem;"><span class="icon-warning"></span> Advisory Summary</h2>
+        {% if advisory_stats %}
+            <div style="margin-bottom: 1rem;">
+                <div style="display: flex; justify-content: space-between; margin: 0.5rem 0;">
+                    <span><span class="icon-urgent"></span> Urgent Advisories:</span>
+                    <strong style="color: #dc3545;">{{ advisory_stats.urgent }}</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin: 0.5rem 0;">
+                    <span><span class="icon-recommendation"></span> Recommendations:</span>
+                    <strong style="color: #ffc107;">{{ advisory_stats.recommendations }}</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin: 0.5rem 0;">
+                    <span><span class="icon-warning"></span> Alerts:</span>
+                    <strong style="color: #fd7e14;">{{ advisory_stats.alerts }}</strong>
+                </div>
+            </div>
+            
+            <div style="background: #f8f9fa; padding: 1rem; border-radius: 5px; margin-top: 1rem;">
+                <h4 style="color: var(--jungle-green); margin-bottom: 0.5rem;">Most Common Issues:</h4>
+                <ul style="margin: 0; padding-left: 1.5rem;">
+                    <li>Low soil nitrogen levels</li>
+                    <li>Drought stress indicators</li>
+                    <li>NDVI decline trends</li>
+                </ul>
+            </div>
+        {% else %}
+            <div style="text-align: center; padding: 2rem; color: var(--jungle-green);">
+                <h3><span class="icon-check"></span> All Clear!</h3>
+                <p>No active advisories for your fields</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="card">
+    <h2 style="color: var(--jungle-green); margin-bottom: 1.5rem;"><span class="icon-analytics"></span> Performance Trends</h2>
+    <div style="background: #f8f9fa; padding: 2rem; border-radius: 8px; text-align: center;">
+        <p style="color: var(--gray); margin-bottom: 1rem;"><span class="icon-chart"></span> Chart visualization would be implemented here</p>
+        <p><strong>Coming Soon:</strong> Interactive charts showing NDVI trends, weather patterns, and yield predictions</p>
+        <div style="margin-top: 1.5rem;">
+            <span style="display: inline-block; width: 20px; height: 20px; background: var(--jungle-green); margin-right: 0.5rem;"></span>
+            <span style="margin-right: 2rem;">NDVI Trends</span>
+            <span style="display: inline-block; width: 20px; height: 20px; background: #17a2b8; margin-right: 0.5rem;"></span>
+            <span style="margin-right: 2rem;">Rainfall</span>
+            <span style="display: inline-block; width: 20px; height: 20px; background: #ffc107; margin-right: 0.5rem;"></span>
+            <span>Temperature</span>
+        </div>
+    </div>
+</div>
+{% endblock %}

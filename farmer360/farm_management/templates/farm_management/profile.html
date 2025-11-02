@@ -1,0 +1,141 @@
+{% extends 'farm_management/base.html' %}
+
+{% block title %}Profile - Farmer360{% endblock %}
+
+{% block content %}
+<div style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem;">
+    <div class="card">
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <div style="width: 100px; height: 100px; background: var(--jungle-green); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; color: white; font-size: 2rem;">
+                <span class="icon-user"></span>
+            </div>
+            <h2 style="color: var(--jungle-green);">{{ user.username|title }}</h2>
+            <p style="color: var(--gray);">Farmer</p>
+        </div>
+        
+        <div style="margin-bottom: 2rem;">
+            <h3 style="color: var(--jungle-green); margin-bottom: 1rem;"><span class="icon-chart"></span> Quick Stats</h3>
+            <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px;">
+                <p><strong>Fields:</strong> {{ total_fields }}</p>
+                <p><strong>Member Since:</strong> {{ user.date_joined|date:"M Y" }}</p>
+                <p><strong>Last Login:</strong> {{ user.last_login|date:"M d, Y" }}</p>
+            </div>
+        </div>
+        
+        <div>
+            <a href="#" class="btn" style="width: 100%; text-align: center; margin-bottom: 0.5rem;">Edit Profile</a>
+            <a href="#" class="btn btn-secondary" style="width: 100%; text-align: center;">Change Password</a>
+        </div>
+    </div>
+    
+    <div>
+        <div class="card">
+            <h2 style="color: var(--jungle-green); margin-bottom: 1.5rem;"><span class="icon-user"></span> Profile Information</h2>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Username</label>
+                    <input type="text" value="{{ user.username }}" readonly style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 5px; background: #f8f9fa;">
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Email</label>
+                    <input type="email" value="{{ user.email|default:'Not provided' }}" readonly style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 5px; background: #f8f9fa;">
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">First Name</label>
+                    <input type="text" value="{{ user.first_name|default:'Not provided' }}" readonly style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 5px; background: #f8f9fa;">
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Last Name</label>
+                    <input type="text" value="{{ user.last_name|default:'Not provided' }}" readonly style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 5px; background: #f8f9fa;">
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2 style="color: var(--jungle-green); margin-bottom: 1.5rem;"><span class="icon-field"></span> Farm Summary</h2>
+            
+            {% if field_data %}
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                    <div style="text-align: center; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+                        <h3 style="color: var(--jungle-green); font-size: 1.5rem;">{{ total_fields }}</h3>
+                        <p>Total Fields</p>
+                    </div>
+                    <div style="text-align: center; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+                        <h3 style="color: var(--jungle-green); font-size: 1.5rem;">{{ healthy_fields }}</h3>
+                        <p>Healthy Fields</p>
+                    </div>
+                    <div style="text-align: center; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+                        <h3 style="color: var(--jungle-green); font-size: 1.5rem;">{{ avg_ndvi|floatformat:2 }}</h3>
+                        <p>Avg NDVI</p>
+                    </div>
+                </div>
+                
+                <h3 style="color: var(--jungle-green); margin-bottom: 1rem;">Your Fields</h3>
+                {% for data in field_data %}
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; margin: 0.5rem 0; background: #f8f9fa; border-radius: 5px;">
+                        <div>
+                            <strong>{{ data.field.name }}</strong>
+                            <br><small>{{ data.field.latitude|floatformat:4 }}, {{ data.field.longitude|floatformat:4 }}</small>
+                        </div>
+                        <div style="text-align: right;">
+                            <span class="health-{{ data.health_status }}">●</span>
+                            <br><small>{{ data.field.created_at|date:"M d, Y" }}</small>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div style="text-align: center; padding: 2rem; color: var(--gray);">
+                    <p>No fields created yet</p>
+                    <a href="{% url 'map_view' %}" class="btn" style="margin-top: 1rem;">Create Your First Field</a>
+                </div>
+            {% endif %}
+        </div>
+        
+        <div class="card">
+            <h2 style="color: var(--jungle-green); margin-bottom: 1.5rem;"><span class="icon-settings"></span> Settings</h2>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                <div>
+                    <h4 style="margin-bottom: 1rem;">Notifications</h4>
+                    <label style="display: flex; align-items: center; margin-bottom: 0.5rem;">
+                        <input type="checkbox" checked style="margin-right: 0.5rem;">
+                        Email alerts for urgent advisories
+                    </label>
+                    <label style="display: flex; align-items: center; margin-bottom: 0.5rem;">
+                        <input type="checkbox" checked style="margin-right: 0.5rem;">
+                        Weekly field reports
+                    </label>
+                    <label style="display: flex; align-items: center;">
+                        <input type="checkbox" style="margin-right: 0.5rem;">
+                        SMS notifications
+                    </label>
+                </div>
+                
+                <div>
+                    <h4 style="margin-bottom: 1rem;">Preferences</h4>
+                    <label style="display: block; margin-bottom: 0.5rem;">
+                        <strong>Temperature Unit:</strong>
+                        <select style="margin-left: 0.5rem; padding: 0.25rem;">
+                            <option>Celsius (°C)</option>
+                            <option>Fahrenheit (°F)</option>
+                        </select>
+                    </label>
+                    <label style="display: block; margin-bottom: 0.5rem;">
+                        <strong>Language:</strong>
+                        <select style="margin-left: 0.5rem; padding: 0.25rem;">
+                            <option>English</option>
+                            <option>Swahili</option>
+                            <option>French</option>
+                        </select>
+                    </label>
+                </div>
+            </div>
+            
+            <div style="margin-top: 1.5rem; text-align: right;">
+                <button class="btn">Save Settings</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

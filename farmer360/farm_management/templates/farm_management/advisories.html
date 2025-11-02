@@ -1,0 +1,101 @@
+{% extends 'farm_management/base.html' %}
+
+{% block title %}Advisories - Farmer360{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1 style="color: var(--jungle-green); margin-bottom: 2rem;"><span class="icon-alert"></span> Farm Advisories</h1>
+    
+    <div style="display: flex; gap: 1rem; margin-bottom: 2rem;">
+        <div style="flex: 1; text-align: center; padding: 1rem; background: #dc3545; color: white; border-radius: 8px;">
+            <h3>{{ urgent_count }}</h3>
+            <p>Urgent</p>
+        </div>
+        <div style="flex: 1; text-align: center; padding: 1rem; background: #ffc107; color: white; border-radius: 8px;">
+            <h3>{{ recommendation_count }}</h3>
+            <p>Recommendations</p>
+        </div>
+        <div style="flex: 1; text-align: center; padding: 1rem; background: #fd7e14; color: white; border-radius: 8px;">
+            <h3>{{ alert_count }}</h3>
+            <p>Alerts</p>
+        </div>
+    </div>
+</div>
+
+{% if all_advisories %}
+    {% for field_name, advisories in all_advisories.items %}
+        <div class="card">
+            <h2 style="color: var(--jungle-green); margin-bottom: 1.5rem;"><span class="icon-field"></span> {{ field_name }}</h2>
+            
+            {% for advisory in advisories %}
+                <div style="margin: 1rem 0; padding: 1.5rem; border-radius: 8px; 
+                    {% if advisory.priority == 'URGENT' %}background: #f8d7da; border-left: 4px solid #dc3545;
+                    {% elif advisory.priority == 'RECOMMENDATION' %}background: #fff3cd; border-left: 4px solid #ffc107;
+                    {% elif advisory.priority == 'ALERT' %}background: #ffeaa7; border-left: 4px solid #fd7e14;
+                    {% endif %}">
+                    
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <h3 style="
+                            {% if advisory.priority == 'URGENT' %}color: #721c24;
+                            {% elif advisory.priority == 'RECOMMENDATION' %}color: #856404;
+                            {% elif advisory.priority == 'ALERT' %}color: #8a4a00;
+                            {% endif %}">
+                            {% if advisory.priority == 'URGENT' %}<span class="icon-urgent"></span>
+                            {% elif advisory.priority == 'RECOMMENDATION' %}<span class="icon-recommendation"></span>
+                            {% elif advisory.priority == 'ALERT' %}<span class="icon-warning"></span>
+                            {% endif %}
+                            {{ advisory.priority }}
+                        </h3>
+                        <span style="font-size: 0.9rem; color: var(--gray);">Just now</span>
+                    </div>
+                    
+                    <p style="font-size: 1.1rem; margin-bottom: 1rem;"><strong>{{ advisory.message }}</strong></p>
+                    
+                    {% if advisory.action %}
+                        <div style="background: rgba(255,255,255,0.7); padding: 1rem; border-radius: 5px; margin-bottom: 1rem;">
+                            <strong><span class="icon-target"></span> Recommended Action:</strong><br>
+                            {{ advisory.action }}
+                        </div>
+                    {% endif %}
+                    
+                    {% if advisory.reason %}
+                        <div style="background: rgba(255,255,255,0.7); padding: 1rem; border-radius: 5px;">
+                            <strong><span class="icon-clipboard"></span> Reason:</strong><br>
+                            {{ advisory.reason }}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    {% endfor %}
+{% else %}
+    <div class="card">
+        <div style="text-align: center; padding: 3rem;">
+            <h2 style="color: var(--jungle-green);"><span class="icon-check"></span> All Clear!</h2>
+            <p style="font-size: 1.2rem; margin: 1rem 0;">No active advisories for your fields</p>
+            <p style="color: var(--gray);">Your crops are healthy and no immediate actions are required.</p>
+            <div style="margin-top: 2rem;">
+                <a href="{% url 'dashboard' %}" class="btn">Return to Dashboard</a>
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+<div class="card">
+    <h2 style="color: var(--jungle-green); margin-bottom: 1.5rem;"><span class="icon-book"></span> Advisory Guide</h2>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+        <div style="padding: 1.5rem; background: #f8f9fa; border-radius: 8px;">
+            <h4 style="color: #dc3545; margin-bottom: 1rem;"><span class="icon-urgent"></span> Urgent Advisories</h4>
+            <p>Require immediate attention to prevent crop damage or yield loss. Act within 24-48 hours.</p>
+        </div>
+        <div style="padding: 1.5rem; background: #f8f9fa; border-radius: 8px;">
+            <h4 style="color: #ffc107; margin-bottom: 1rem;"><span class="icon-recommendation"></span> Recommendations</h4>
+            <p>Suggested actions to optimize crop health and yield. Implement within 1-2 weeks.</p>
+        </div>
+        <div style="padding: 1.5rem; background: #f8f9fa; border-radius: 8px;">
+            <h4 style="color: #fd7e14; margin-bottom: 1rem;"><span class="icon-warning"></span> Alerts</h4>
+            <p>Monitor closely and prepare for potential issues. Take preventive measures as needed.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

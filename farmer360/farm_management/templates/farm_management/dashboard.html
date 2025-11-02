@@ -1,17 +1,92 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Farmer360 Dashboard</title>
-</head>
-<body>
-    <h1>Farm Dashboard</h1>
-    <a href="{% url 'map_view' %}">Edit Farm Fields</a>
+{% extends 'farm_management/base.html' %}
+
+{% block title %}Dashboard - Farmer360{% endblock %}
+
+{% block content %}
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+    <div class="card">
+        <h2 style="color: var(--jungle-green); margin-bottom: 1rem;"><span class="icon-chart"></span> Farm Overview</h2>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; text-align: center;">
+            <div>
+                <h3 style="color: var(--jungle-green);">{{ field_data|length }}</h3>
+                <p>Total Fields</p>
+            </div>
+            <div>
+                <h3 style="color: var(--jungle-green);">{% for data in field_data %}{% if data.health_status == 'green' %}{{ forloop.counter0|add:1 }}{% endif %}{% endfor %}</h3>
+                <p>Healthy Fields</p>
+            </div>
+            <div>
+                <h3 style="color: #ffc107;">{% for data in field_data %}{% if data.advisories %}{{ forloop.counter0|add:1 }}{% endif %}{% endfor %}</h3>
+                <p>Need Attention</p>
+            </div>
+        </div>
+    </div>
     
-    <h2>Your Fields</h2>
-    {% for field in fields %}
-        <div>{{ field.name }} - Created: {{ field.created_at }}</div>
+    <div class="card">
+        <h2 style="color: var(--jungle-green); margin-bottom: 1rem;"><span class="icon-alert"></span> Recent Alerts</h2>
+        {% for data in field_data %}
+            {% for advisory in data.advisories %}
+                <div style="padding: 0.5rem; margin: 0.5rem 0; border-left: 4px solid var(--jungle-green); background: #f8f9fa;">
+                    <strong>{{ data.field.name }}:</strong> {{ advisory.message }}
+                </div>
+            {% endfor %}
+        {% empty %}
+            <p style="color: var(--jungle-green);"><span class="icon-check"></span> All fields are healthy!</p>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <h2 style="color: var(--jungle-green);"><span class="icon-field"></span> Your Fields</h2>
+        <a href="{% url 'map_view' %}" class="btn">+ Add New Field</a>
+    </div>
+    
+    {% for data in field_data %}
+        <div style="border: 1px solid #e0e0e0; border-radius: 8px; padding: 1.5rem; margin: 1rem 0; background: #fafafa;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h3>{{ data.field.name }} <span class="health-{{ data.health_status }}">●</span></h3>
+                <div>
+                    <a href="{% url 'field_detail' data.field.id %}" class="btn btn-secondary" style="margin-right: 0.5rem;">View Details</a>
+                    <a href="{% url 'map_view' %}" class="btn">Edit</a>
+                </div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin: 1rem 0;">
+                <div>
+                    <strong>Location:</strong><br>
+                    {{ data.field.latitude|floatformat:4 }}, {{ data.field.longitude|floatformat:4 }}
+                </div>
+                {% if data.latest_snapshot %}
+                <div>
+                    <strong>NDVI:</strong><br>
+                    {{ data.latest_snapshot.ndvi_value|floatformat:2 }}
+                </div>
+                <div>
+                    <strong>Soil pH:</strong><br>
+                    {{ data.latest_snapshot.soil_ph|floatformat:1 }}
+                </div>
+                {% endif %}
+            </div>
+            
+            {% if data.advisories %}
+                <div style="margin-top: 1rem;">
+                    <strong style="color: var(--jungle-green);">Current Advisories:</strong>
+                    {% for advisory in data.advisories %}
+                        <div style="margin: 0.5rem 0; padding: 0.75rem; background: white; border-radius: 5px; border-left: 4px solid var(--jungle-green);">
+                            <strong>{{ advisory.priority }}:</strong> {{ advisory.message }}
+                            {% if advisory.action %}<br><em>{{ advisory.action }}</em>{% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
     {% empty %}
-        <p>No fields created yet.</p>
+        <div style="text-align: center; padding: 3rem;">
+            <h3 style="color: var(--gray);">No fields created yet</h3>
+            <p style="margin: 1rem 0;">Start by adding your first farm field to get personalized recommendations</p>
+            <a href="{% url 'map_view' %}" class="btn">Create Your First Field</a>
+        </div>
     {% endfor %}
-</body>
-</html>
+</div>
+{% endblock %}

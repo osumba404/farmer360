@@ -1,0 +1,48 @@
+{% extends 'farm_management/base.html' %}
+
+{% block title %}My Fields - Farmer360{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <h1 style="color: var(--jungle-green);"><span class="icon-field"></span> My Farm Fields</h1>
+        <a href="{% url 'map_view' %}" class="btn">+ Add New Field</a>
+    </div>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+        {% for data in field_data %}
+            <div style="border: 1px solid #e0e0e0; border-radius: 10px; padding: 1.5rem; background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h3 style="color: var(--jungle-green);">{{ data.field.name }}</h3>
+                    <span class="health-{{ data.health_status }}">●</span>
+                </div>
+                
+                <div style="margin-bottom: 1rem;">
+                    <p><strong><span class="icon-location"></span> Location:</strong> {{ data.field.latitude|floatformat:4 }}, {{ data.field.longitude|floatformat:4 }}</p>
+                    <p><strong><span class="icon-calendar"></span> Created:</strong> {{ data.field.created_at|date:"M d, Y" }}</p>
+                </div>
+                
+                {% if data.latest_snapshot %}
+                <div style="background: #f8f9fa; padding: 1rem; border-radius: 5px; margin-bottom: 1rem;">
+                    <h4 style="color: var(--jungle-green); margin-bottom: 0.5rem;">Latest Data</h4>
+                    <p><strong>NDVI:</strong> {{ data.latest_snapshot.ndvi_value|floatformat:2 }}</p>
+                    <p><strong>Soil pH:</strong> {{ data.latest_snapshot.soil_ph|floatformat:1 }}</p>
+                    <p><strong>Nitrogen:</strong> {{ data.latest_snapshot.nitrogen_percent|floatformat:2 }}%</p>
+                </div>
+                {% endif %}
+                
+                <div style="display: flex; gap: 0.5rem;">
+                    <a href="{% url 'field_detail' data.field.id %}" class="btn" style="flex: 1; text-align: center;">View Details</a>
+                    <a href="{% url 'map_view' %}" class="btn btn-secondary">Edit</a>
+                </div>
+            </div>
+        {% empty %}
+            <div style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
+                <h3 style="color: var(--gray);">No fields found</h3>
+                <p style="margin: 1rem 0;">Create your first field to start receiving personalized farming recommendations</p>
+                <a href="{% url 'map_view' %}" class="btn">Create Field</a>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
