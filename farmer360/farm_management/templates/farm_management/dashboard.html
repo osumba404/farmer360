@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Farmer360 Dashboard</title>
+</head>
+<body>
+    <h1>Farm Dashboard</h1>
+    <a href="{% url 'map_view' %}">Edit Farm Fields</a>
+    
+    <h2>Your Fields</h2>
+    {% for field in fields %}
+        <div>{{ field.name }} - Created: {{ field.created_at }}</div>
+    {% empty %}
+        <p>No fields created yet.</p>
+    {% endfor %}
+</body>
+</html>
